@@ -7,7 +7,8 @@ class Substring_search_tests(unittest.TestCase):
         super().__init__(*args, **kwargs)
         self.substring_finders = [
             substring_finder.simplest_str_finder,
-            substring_finder.KMP_algorithm
+            substring_finder.KMP_algorithm,
+            substring_finder.z_function_finder
         ]
 
     def test_no_substring(self):

@@ -25,6 +25,7 @@ def simplest_str_finder(haystack: str, needle: str) -> Union[tuple, int]:
 def KMP_algorithm(haystack: str, needle: str) -> Union[tuple, int]:
     """
     Knuth-Morris-Pratt algorithm
+    Explanation: https://www.youtube.com/watch?v=7g-WEBj3igk
     Time complexity: O(len(haystack) + len(needle))
     Memory complexity: O(len(needle))
     """
@@ -65,9 +66,31 @@ def prefix_function(text: str) -> list:
     return pi
 
 
-def regex_finder(haystack, needle):
-    match = re.search(haystack, needle)
-    if match is None:
+def z_function_finder(haystack: str, needle: str, separator="$") -> Union[tuple, int]:
+    """
+    Explanation: https://youtu.be/BP9LXwosFco
+    Time complexity: O(len(haystack) + len(needle))
+    Memory complexity: O(len(haystack) + len(needle))
+    """
+    if len(haystack) < len(needle):
         return -1
-    else:
-        return match.span()
+    if len(needle) < 1:
+        return 0
+    z = z_function(needle + separator + haystack)
+    try:
+        begin = z.index(len(needle)) - len(needle) - 1
+        return begin, begin + len(needle)
+    except ValueError:
+        return -1
+
+
+def z_function(text: str) -> list:
+    l, r = 0, 1
+    z = [0] * len(text)
+    for i in range(1, len(text)):
+        z[i] = max(0, min(z[i - l], r - i))
+        while i + z[i] < len(text) and text[i + z[i]] == text[z[i]]:
+            z[i] += 1
+        if i + z[i] > r:
+            l, r = i, i + z[i]
+    return z
