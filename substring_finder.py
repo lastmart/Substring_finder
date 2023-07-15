@@ -94,3 +94,48 @@ def z_function(text: str) -> list:
         if i + z[i] > r:
             l, r = i, i + z[i]
     return z
+
+
+def BMH_algorithm(haystack: str, needle: str) -> Union[tuple, int]:
+    """
+    Boyer-Moore-Horspool algorithm
+    Explanation: https://yandex.ru/video/preview/2201665387922285863
+    Time complexity: O(len(haystack) * len(needle))
+    Memory complexity: O(len(needle))
+    Amortization time complexity: O(len(haystack / |Σ|)
+    where |Σ| is power of alphabet
+    """
+    if len(haystack) < len(needle):
+        return -1
+    if len(needle) < 1:
+        return 0
+    d = d_function(needle)
+    border = len(needle) - 1
+    k, l = 0, 1
+    while border < len(haystack):
+        while haystack[border - k] == needle[-l]:
+            l += 1
+            k += 1
+            if l == len(needle):
+                return border - len(needle) + 1, border + 1
+        else:
+            control_char = haystack[border] if k == 0 else needle[-1]
+            k, l = 0, 1
+            if control_char in d:
+                border += d[control_char]
+            else:
+                border += len(needle)
+    return -1
+
+
+def d_function(text: str) -> dict:
+    d = dict()
+    pointer = 0
+    for e in text[-2::-1]:
+        pointer += 1
+        if e in d:
+            continue
+        d[e] = pointer
+    if text[-1] not in d:
+        d[text[-1]] = len(text)
+    return d
