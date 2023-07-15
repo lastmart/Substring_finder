@@ -1,5 +1,4 @@
 from timeit import default_timer
-import substring_finder
 import re
 
 
@@ -41,7 +40,8 @@ class Reporter:
     def parse_documentation(doc: str) -> list:
         name = re.search('(?<=Name:).+', doc)[0].strip()
         time_complexity = re.search('(?<=Time complexity:).+', doc)[0].strip()
-        memory_complexity = re.search('(?<=Memory complexity:).+', doc)[0].strip()
+        memory_complexity = re.search('(?<=Memory complexity:).+', doc)[
+            0].strip()
         return [name, time_complexity, memory_complexity]
 
     def get_statistics_of_duplicate_data(self):
@@ -88,14 +88,3 @@ class Reporter:
                 finder(test_text, test_substring)
             statistics.append(str(default_timer() - start_time))
         return statistics
-
-
-if __name__ == '__main__':
-    substring_finders = [
-        substring_finder.simplest_str_finder,
-        substring_finder.KMP_algorithm,
-        substring_finder.z_function_finder,
-        substring_finder.BMH_algorithm
-    ]
-    reporter = Reporter(substring_finders)
-    reporter.make_stats()
