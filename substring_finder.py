@@ -4,7 +4,7 @@ from typing import Union
 
 def simplest_str_finder(haystack: str, needle: str) -> Union[tuple, int]:
     """
-    The simplest search for a substring in a string
+    Name: The simplest search for a substring in a string
     Time complexity: O(len(haystack) * len(needle))
     Memory complexity: O(1)
     """
@@ -24,7 +24,7 @@ def simplest_str_finder(haystack: str, needle: str) -> Union[tuple, int]:
 
 def KMP_algorithm(haystack: str, needle: str) -> Union[tuple, int]:
     """
-    Knuth-Morris-Pratt algorithm
+    Name: Knuth-Morris-Pratt algorithm
     Explanation: https://www.youtube.com/watch?v=7g-WEBj3igk
     Time complexity: O(len(haystack) + len(needle))
     Memory complexity: O(len(needle))
@@ -68,6 +68,7 @@ def prefix_function(text: str) -> list:
 
 def z_function_finder(haystack: str, needle: str, separator="$") -> Union[tuple, int]:
     """
+    Name: Algorithm using z function
     Explanation: https://youtu.be/BP9LXwosFco
     Time complexity: O(len(haystack) + len(needle))
     Memory complexity: O(len(haystack) + len(needle))
@@ -98,7 +99,7 @@ def z_function(text: str) -> list:
 
 def BMH_algorithm(haystack: str, needle: str) -> Union[tuple, int]:
     """
-    Boyer-Moore-Horspool algorithm
+    Name: Boyer-Moore-Horspool algorithm
     Explanation: https://yandex.ru/video/preview/2201665387922285863
     Time complexity: O(len(haystack) * len(needle))
     Memory complexity: O(len(needle))

@@ -1,21 +1,27 @@
 from timeit import default_timer
 import substring_finder
+import re
 
 
 class Reporter:
-    def __init__(self, functions):
+    def __init__(self, functions: list):
+        for e in functions:
+            if not hasattr(e, '__call__'):
+                raise TypeError(f'{e} is not a function')
         self.substring_finders = functions
         self.all_statistics = []
 
     def make_stats(self):
         stats = self.get_stats()
-        finders_docs = [e for e in map(lambda x: x.__doc__, self.substring_finders)]
-        a = [e for e in zip(map(lambda x: x.split('\n'), finders_docs))]
+        finders_docs = [self.parse_documentation(e) for e in
+                        map(lambda x: x.__doc__, self.substring_finders)]
+        report_data = [e for e in zip(*[e for e in finders_docs])]
         report = [
-            f'|comparing parameter|{"|".join(map(lambda x: x.__name__, self.substring_finders))}|',
+            f'|Parameter name|{"|".join(report_data[0])}|',
             '|-' * (len(self.substring_finders) + 1) + '|',
-            f'|Asymptotics|{"|".join(map(lambda x: x.__doc__, self.substring_finders))}|'
-            ]
+            f'|Time complexity|{"|".join(report_data[1])}|',
+            f'|Memory complexity|{"|".join(report_data[2])}|'
+        ]
         stats_lines = [f"|{'|'.join(e)}|" for e in stats]
         for e in stats_lines:
             report.append(e)
@@ -23,12 +29,20 @@ class Reporter:
             f.write('\n'.join(report))
 
     def get_stats(self):
-        comparing_parameters = filter(lambda x: x[0] != '_', dir(Reporter))
+        comparing_parameters = [
+            self.get_statistics_of_duplicate_data,
+            self.get_statistics_of_non_duplicate_data
+        ]
         for parameter in comparing_parameters:
-            if parameter in ["make_stats", "get_stats"]:
-                continue
-            self.all_statistics.append(getattr(Reporter, parameter)(self))
+            self.all_statistics.append(parameter())
         return self.all_statistics
+
+    @staticmethod
+    def parse_documentation(doc: str) -> list:
+        name = re.search('(?<=Name:).+', doc)[0].strip()
+        time_complexity = re.search('(?<=Time complexity:).+', doc)[0].strip()
+        memory_complexity = re.search('(?<=Memory complexity:).+', doc)[0].strip()
+        return [name, time_complexity, memory_complexity]
 
     def get_statistics_of_duplicate_data(self):
         test_text = '''
@@ -70,7 +84,7 @@ class Reporter:
         statistics = [statistic_name]
         for finder in self.substring_finders:
             start_time = default_timer()
-            for _ in range(1000):
+            for _ in range(100000):
                 finder(test_text, test_substring)
             statistics.append(str(default_timer() - start_time))
         return statistics
@@ -79,7 +93,9 @@ class Reporter:
 if __name__ == '__main__':
     substring_finders = [
         substring_finder.simplest_str_finder,
-        substring_finder.KMP_algorithm
+        substring_finder.KMP_algorithm,
+        substring_finder.z_function_finder,
+        substring_finder.BMH_algorithm
     ]
     reporter = Reporter(substring_finders)
     reporter.make_stats()
