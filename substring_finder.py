@@ -1,4 +1,5 @@
-import re
+from trie import Trie, Node
+from queue import Queue
 from typing import Union
 
 
@@ -140,3 +141,68 @@ def d_function(text: str) -> dict:
     if text[-1] not in d:
         d[text[-1]] = len(text)
     return d
+
+
+def AC_algorithm(haystack: str, needles: Union[list, str]) -> Union[tuple, int]:
+    """
+    Name: Aho-Corasick algorithm
+    Explanation: https://www.youtube.com/watch?v=-KCd8UUwU38
+    Time complexity: O(len(needles) + len(haystack))
+    Memory complexity: O(len(needles))
+    This version of the algorithm finds the first occurrence of one
+    of the needles in the haystack
+    """
+    trie = Trie(needles)
+    build_suffix_links(trie)
+    find_extra_terminal_nodes(trie)
+    alphabet = set(''.join(needles))
+    state = trie.root
+    counter = 0
+    for e in haystack:
+        counter += 1
+        child = state.children.get(e)
+        state = state.suffix if child is None else child
+        if e not in alphabet or state is None:
+            state = trie.root
+            continue
+        if state.is_terminal:
+            return counter - get_depth_of_node(trie, state), counter
+    return -1
+
+
+def build_suffix_links(trie: Trie):
+    queue = Queue()
+    queue.put((trie.root, trie.root, None, None))
+    while not queue.empty():
+        e = queue.get()
+        current_element = e[0]
+        current_element.find_suffix(*e[1:])
+        if len(current_element.children) <= 0:
+            continue
+        for e in [(value, trie.root, current_element, key) for key, value in
+                  current_element.children.items()]:
+            queue.put(e)
+
+
+def find_extra_terminal_nodes(trie: Trie):
+    queue = Queue()
+    queue.put(trie.root)
+    while not queue.empty():
+        current = node = queue.get()
+        while not current.is_terminal and node.suffix:
+            current.is_terminal = node.suffix.is_terminal
+            node = node.suffix
+        for e in current.children.values():
+            queue.put(e)
+
+
+def get_depth_of_node(trie: Trie, node: Node):
+    queue = Queue()
+    queue.put((trie.root, 0))
+    while not queue.empty():
+        n, depth = queue.get()
+        if n is node:
+            return depth
+        for e in n.children.values():
+            queue.put((e, depth + 1))
+    return -1

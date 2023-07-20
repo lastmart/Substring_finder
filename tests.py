@@ -10,6 +10,7 @@ class Substring_search_tests(unittest.TestCase):
             substring_finder.KMP_algorithm,
             substring_finder.z_function_finder,
             substring_finder.BMH_algorithm,
+            substring_finder.AC_algorithm
         ]
 
     def test_no_substring(self):
