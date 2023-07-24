@@ -3,9 +3,9 @@ from queue import Queue
 from typing import Union
 
 
-def simplest_str_finder(haystack: str, needle: str) -> Union[tuple, int]:
+def brute_force(haystack: str, needle: str) -> Union[tuple, int]:
     """
-    Name: The simplest search for a substring in a string
+    Name: Brute force
     Time complexity: O(len(haystack) * len(needle))
     Memory complexity: O(1)
     """
@@ -155,7 +155,7 @@ def AC_algorithm(haystack: str, needles: Union[list, str]) -> Union[tuple, int]:
     trie = Trie(needles)
     build_suffix_links(trie)
     find_extra_terminal_nodes(trie)
-    alphabet = set(''.join(needles))
+    alphabet = set("".join(needles))
     state = trie.root
     counter = 0
     for e in haystack:
@@ -179,8 +179,10 @@ def build_suffix_links(trie: Trie):
         current_element.find_suffix(*e[1:])
         if len(current_element.children) <= 0:
             continue
-        for e in [(value, trie.root, current_element, key) for key, value in
-                  current_element.children.items()]:
+        for e in [
+            (value, trie.root, current_element, key)
+            for key, value in current_element.children.items()
+        ]:
             queue.put(e)
 
 
