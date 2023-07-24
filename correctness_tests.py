@@ -6,7 +6,7 @@ class Substring_search_tests(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.substring_finders = [
-            substring_finder.simplest_str_finder,
+            substring_finder.brute_force,
             substring_finder.KMP_algorithm,
             substring_finder.z_function_finder,
             substring_finder.BMH_algorithm,
