@@ -8,6 +8,8 @@ def brute_force(haystack: str, needle: str) -> Union[tuple, int]:
     Name: Brute force
     Time complexity: O(len(haystack) * len(needle))
     Memory complexity: O(1)
+    Best case: SmallDataWithoutRepeating.txt
+    Worst case: SubstringContainsFewDifferentLetters.txt
     """
     if len(haystack) < len(needle):
         return -1
@@ -29,6 +31,8 @@ def KMP_algorithm(haystack: str, needle: str) -> Union[tuple, int]:
     Explanation: https://www.youtube.com/watch?v=7g-WEBj3igk
     Time complexity: O(len(haystack) + len(needle))
     Memory complexity: O(len(needle))
+    Best case: BeginningAndEndingOfSubstringRepeatManyTimes.txt
+    Worst case: SmallDataWithoutRepeating.txt when len(substring) is small
     """
     if len(haystack) < len(needle):
         return -1
@@ -73,6 +77,8 @@ def z_function_finder(haystack: str, needle: str, separator="$") -> Union[tuple,
     Explanation: https://youtu.be/BP9LXwosFco
     Time complexity: O(len(haystack) + len(needle))
     Memory complexity: O(len(haystack) + len(needle))
+    Best case: SmallDataWithoutRepeating.txt when len(substring) is small
+    Worst case: BeginningOfSubstringRepeatManyTimes.txt
     """
     if len(haystack) < len(needle):
         return -1
@@ -106,6 +112,8 @@ def BMH_algorithm(haystack: str, needle: str) -> Union[tuple, int]:
     Memory complexity: O(len(needle))
     Amortization time complexity: O(len(haystack / |Σ|)
     where |Σ| is power of alphabet
+    Best case: BeginningAndEndingOfSubstringRepeatManyTimes.txt
+    Worst case: SmallDataWithoutRepeating.txt when len(substring) is small
     """
     if len(haystack) < len(needle):
         return -1
@@ -113,16 +121,16 @@ def BMH_algorithm(haystack: str, needle: str) -> Union[tuple, int]:
         return 0
     d = d_function(needle)
     border = len(needle) - 1
-    k, l = 0, 1
+    k, m = 0, 1
     while border < len(haystack):
-        while haystack[border - k] == needle[-l]:
-            l += 1
+        while haystack[border - k] == needle[-m]:
+            m += 1
             k += 1
-            if l == len(needle):
+            if m == len(needle):
                 return border - len(needle) + 1, border + 1
         else:
             control_char = haystack[border] if k == 0 else needle[-1]
-            k, l = 0, 1
+            k, m = 0, 1
             if control_char in d:
                 border += d[control_char]
             else:
