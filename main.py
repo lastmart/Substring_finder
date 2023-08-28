@@ -1,7 +1,7 @@
-from report import Reporter
+from report import Reporter, GraphBuilder
 import substring_finder
 import os
-
+import re
 
 if __name__ == '__main__':
     substring_finders = [
@@ -71,5 +71,9 @@ if __name__ == '__main__':
     texts_path = os.path.dirname(__file__) + "\\texts\\"
     comparing_parameters = list(map(lambda x: (texts_path + x[0], x[1], x[2]),
                                     comparing_parameters))
-    reporter = Reporter(substring_finders, comparing_parameters, 51)
+    groups_patterns = [re.compile(r'(Big data without repeating)(.*)'),
+                       re.compile(r'(Small data without repeating)(.*)'),
+                       re.compile(
+                           r'(.*\brepeat\b.*)|(Substring contains few different letters)')]
+    reporter = Reporter(substring_finders, comparing_parameters, 51, groups_patterns)
     reporter.generate_statistics()
