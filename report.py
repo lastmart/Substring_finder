@@ -3,6 +3,7 @@ from collections import namedtuple, defaultdict
 from typing import Union, Callable, Pattern
 import matplotlib.pyplot as plt
 from math import sqrt
+from os import sep
 import re
 
 Documentation = namedtuple('Documentation',
@@ -106,9 +107,9 @@ class Reporter:
                     self._substring_finders,
                     self._tester.path_to_save,
                     self._groups_patterns):
-                for key, points in data_class.items():
-                    graph_builder = GraphBuilder(points)
-                    graph_builder.build_graphs()
+                path_to_save = sep.join(['.', 'graphs', f'graph{id(data_class)}.png'])
+                graph_builder = GraphBuilder(data_class, path_to_save)
+                graph_builder.build_graphs()
 
     def _generate_report_in_md_format(self):
         finders_docs = [
@@ -249,9 +250,30 @@ class Tester:
 
 
 class GraphBuilder:
-    def __init__(self, points: list[Point]):
-        self._points = points
+    def __init__(self, data: dict[str, list[Point]], path_to_save: str):
+        self._data = data
+        self.path_to_save = path_to_save
 
     def build_graphs(self):
-        for point in self._points:
-            pass
+        grid_size = self.get_grid_size(len(self._data.keys()))
+        figure = plt.figure(figsize=(40, 30))
+        current_number = 1
+        for key, points in self._data.items():
+            ax = figure.add_subplot(*grid_size, current_number)
+            ax.set_title(key, fontsize=30)
+            for point in points:
+                ax.plot(point.x, point.y, marker='o', color='red')
+                ax.plot([point.x] * 2, point.get_y_range(), linestyle='-',
+                        color='red', alpha=0.6)
+            current_number += 1
+            plt.xticks(list(map(lambda p: p.x, points)),
+                       list(map(lambda p: p.name, points)), fontsize=20)
+        figure.savefig(self.path_to_save)
+        figure.show()
+
+    @staticmethod
+    def get_grid_size(number: int) -> tuple[int, int]:
+        x = y = round(sqrt(number))
+        x = x if x * y >= number or x * (y + 1) >= number else x + 1
+        y = y if x * y >= number or (x + 1) * y >= number else y + 1
+        return x, y
