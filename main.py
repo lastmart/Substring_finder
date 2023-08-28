@@ -1,4 +1,4 @@
-from report import Reporter, GraphBuilder
+from report import Reporter
 import substring_finder
 import os
 import re
